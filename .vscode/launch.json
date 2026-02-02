@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-LockInApplication<lock-in>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.nathan.lock_in.LockInApplication",
+            "projectName": "lock-in",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
