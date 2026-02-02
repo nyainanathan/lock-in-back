@@ -1,10 +1,12 @@
 package com.nathan.lock_in.user;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -27,7 +29,7 @@ public class UserRepository {
         return jdbcTemplate.query(query, userRowMapper);
     }
 
-    public Users findByEmail(String email){
+    public Optional<Users> findByEmail(String email){
         String query = """
                 SELECT id as user_id,
                 first_name as user_first_name,
@@ -38,8 +40,14 @@ public class UserRepository {
                 FROM users
                 WHERE email = ?
                 """;
+        try{
+                return Optional.ofNullable(
+                        jdbcTemplate.queryForObject(query, userRowMapper, email)
+                ) ;
 
-        return jdbcTemplate.queryForObject(query, userRowMapper, email);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     public Users findById(String id){

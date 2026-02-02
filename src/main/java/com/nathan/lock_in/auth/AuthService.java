@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,36 +20,36 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    private LoginResponse register(UserCreationDTO userToSave){
+    public LoginResponse register(UserCreationDTO userToSave){
 
-        Users isExisting = userRepo.findByEmail(userToSave.getEmail());
-
-        if(isExisting != null) {
+        Optional<Users> isExisting = userRepo.findByEmail(userToSave.getEmail());
+        System.out.println("this user");
+        if(!isExisting.isEmpty()) {
             throw new RuntimeException("This user already exists!");
         }
 
         userToSave.setPasswordHash(
                 passwordEncoder.encode(userToSave.getPasswordHash())
         );
-
+        System.out.println("saving");
         Users createdUser = userRepo.save(userToSave);
 
         return getLoginResponse(createdUser);
 
     }
 
-    private LoginResponse login(LoginRequest request) throws Exception {
-        Users currentUser = userRepo.findByEmail(request.getEmail());
+    public LoginResponse login(LoginRequest request) throws Exception {
+        Optional<Users> currentUser = userRepo.findByEmail(request.getEmail());
 
-        if(currentUser == null) {
+        if(currentUser.isEmpty()) {
             throw new Exception("This email is associated with any account!");
         }
 
-        if(!passwordEncoder.matches(request.getPassword(), currentUser.getPasswordHash())){
+        if(!passwordEncoder.matches(request.getPassword(), currentUser.get().getPasswordHash())){
             throw new Exception("Wrong password!");
         }
 
-        return getLoginResponse(currentUser);
+        return getLoginResponse(currentUser.get());
     }
 
     @NonNull
