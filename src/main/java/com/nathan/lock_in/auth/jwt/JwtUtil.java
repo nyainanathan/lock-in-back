@@ -22,7 +22,7 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    private String createToken(Map<String, Object> claims, String subject){
+    public String createToken(Map<String, Object> claims, String subject){
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
