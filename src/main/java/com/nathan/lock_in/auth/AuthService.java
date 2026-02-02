@@ -5,6 +5,7 @@ import com.nathan.lock_in.user.UserCreationDTO;
 import com.nathan.lock_in.user.UserRepository;
 import com.nathan.lock_in.user.Users;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,18 +33,37 @@ public class AuthService {
 
         Users createdUser = userRepo.save(userToSave);
 
-        String jwtToken = jwtUtil.createToken(Map.of(), createdUser.getEmail());
+        return getLoginResponse(createdUser);
 
-        MinimalUserInfo userInfo = new MinimalUserInfo();
-        userInfo.setId(createdUser.getId());
-        userInfo.setEmail(createdUser.getEmail());
-        userInfo.setFirstName(createdUser.getFirstName());
-        userInfo.setLastName(createdUser.getLastName());
+    }
+
+    private LoginResponse login(LoginRequest request) throws Exception {
+        Users currentUser = userRepo.findByEmail(request.getEmail());
+
+        if(currentUser == null) {
+            throw new Exception("This email is associated with any account!");
+        }
+
+        if(!passwordEncoder.matches(request.getPassword(), currentUser.getPasswordHash())){
+            throw new Exception("Wrong password!");
+        }
+
+        return getLoginResponse(currentUser);
+    }
+
+    @NonNull
+    private LoginResponse getLoginResponse(Users currentUser) {
+        String jwtToken = jwtUtil.createToken(Map.of(), currentUser.getEmail());
+
+        MinimalUserInfo info = new MinimalUserInfo();
+        info.setId(currentUser.getId());
+        info.setEmail(currentUser.getEmail());
+        info.setFirstName(currentUser.getFirstName());
+        info.setLastName(currentUser.getLastName());
 
         return new LoginResponse(
                 jwtToken,
-                userInfo
+                info
         );
-
     }
 }
