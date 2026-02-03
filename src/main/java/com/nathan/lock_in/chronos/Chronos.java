@@ -1,5 +1,6 @@
 package com.nathan.lock_in.chronos;
 
+import com.nathan.lock_in.auth.MinimalUserInfo;
 import com.nathan.lock_in.user.Users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.time.Instant;
 @Getter
 public class Chronos {
     private String id;
-    private Users user;
+    private MinimalUserInfo user;
     private Double duration;
     private String title;
     private Instant createdAt;

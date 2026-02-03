@@ -1,5 +1,6 @@
 package com.nathan.lock_in.user;
 
+import com.nathan.lock_in.auth.MinimalUserInfo;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,15 @@ public class UserRowMapper implements RowMapper<Users> {
                 rs.getString("user_email"),
                 rs.getTimestamp("user_created_at").toInstant(),
                 rs.getString("user_password_hash")
+        );
+    }
+
+    public MinimalUserInfo mapMinimalRow(ResultSet rs, int rowNum) throws SQLException {
+        return new MinimalUserInfo(
+                rs.getString("user_id"),
+                rs.getString("user_first_name"),
+                rs.getString("user_last_name"),
+                rs.getString("user_email")
         );
     }
 }

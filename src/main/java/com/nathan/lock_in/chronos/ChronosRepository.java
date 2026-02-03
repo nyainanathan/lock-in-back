@@ -9,9 +9,20 @@ import org.springframework.stereotype.Repository;
 public class ChronosRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ChronosRowMapper chronosRowMapper;
 
     public Chronos findById(String id) {
-
+        String sql = """
+                SELECT c.id as chrono_id,
+                c.duration as chrono_duration,
+                c.title as chrono_title,
+                c.created_at as chrono_created_at,
+                c.unit as chrono_unit,
+                u.user as user_id,
+                u.first_name as user_first_name,
+                u.last_name as user_last_name,
+                u.email as user_email,
+                """;
     }
 
     public Chronos save(ChronosCreationDTO toSave) {
