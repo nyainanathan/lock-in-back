@@ -11,11 +11,11 @@ public class ChronosService {
 
     private final ChronosRepository chronosRepository;
 
-    private Chronos save(ChronosCreationDTO toSave){
+    public Chronos save(ChronosCreationDTO toSave){
         return chronosRepository.save(toSave);
     }
 
-    private List<Chronos> findAll(String userId, Integer size, Integer page){
+    public List<Chronos> findAll(String userId, Integer size, Integer page){
 
         if(size == null) {
             size = 10;

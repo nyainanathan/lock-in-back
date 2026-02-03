@@ -27,7 +27,7 @@ public class ChronosRepository {
                 u.email as user_email
                 FROM chronos AS c
                 JOIN users AS u ON c.id_user = u.id
-                WHERE c.id = ?
+                WHERE c.id = CAST(? AS uuid)
                 """;
 
         return jdbcTemplate.queryForObject(sql, chronosRowMapper, id);
@@ -36,18 +36,19 @@ public class ChronosRepository {
     public Chronos save(ChronosCreationDTO toSave) {
 
         String sql = """
-                INSERT INTO chronos
-                (id_user, duration, title, unit)
-                VALUES (?::UUID, ?, ?, ?::duration_unit)
-                ON CONFLICT DO NOTHING
-                RETURNING id
-                """;
+        INSERT INTO chronos
+        (id_user, duration, title, unit)
+        VALUES (CAST(? AS uuid), ?, ?, CAST(? AS public.duration_unit))
+        RETURNING id
+        """;
 
         String newChronoId = jdbcTemplate.queryForObject(
                 sql,
                 new Object[] {
-                        toSave.getUserId(), toSave.getDuration(),
-                        toSave.getTitle(), toSave.getUnit()
+                        toSave.getUserId(),
+                        toSave.getDuration(),
+                        toSave.getTitle(),
+                        toSave.getUnit().toString() // Assurez-vous que c'est une String
                 },
                 String.class
         );
@@ -68,7 +69,7 @@ public class ChronosRepository {
                 u.email as user_email
                 FROM chronos AS c
                 JOIN users AS u ON c.id_user = u.id
-                WHERE u.id = ?
+                WHERE u.id = CAST(? AS uuid)
                 OFFSET ? LIMIT ?
                 """;
 

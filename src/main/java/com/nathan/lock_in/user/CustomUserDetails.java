@@ -27,4 +27,6 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return user.getEmail();
     }
+
+    public String getId(){ return user.getId(); }
 }
