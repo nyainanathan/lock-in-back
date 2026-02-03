@@ -50,4 +50,23 @@ public class ProjectsRepository {
 
         return findById(projectId);
     }
+
+    public Projects update(String projectId, String query, String[] params){
+        jdbcTemplate.update(query, params);
+        return findById(projectId);
+    }
+
+    public Projects delete(String projectId){
+        String sql = """
+                DELETE FROM projects WHERE id = ?::uuid
+                """;
+
+        Projects toBeDeleted = findById(projectId);
+
+        jdbcTemplate.update(sql, projectId);
+
+        return toBeDeleted;
+    }
+
+
 }
