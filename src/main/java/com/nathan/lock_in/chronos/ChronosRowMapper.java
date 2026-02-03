@@ -1,8 +1,6 @@
 package com.nathan.lock_in.chronos;
 
-import com.nathan.lock_in.auth.MinimalUserInfo;
 import com.nathan.lock_in.user.UserRowMapper;
-import com.nathan.lock_in.user.Users;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -24,9 +22,11 @@ public class ChronosRowMapper implements RowMapper<Chronos> {
         chrono.setTitle(rs.getString("chrono_title"));
         chrono.setDuration(rs.getDouble("chrono_duration"));
         chrono.setCreatedAt(rs.getTimestamp("chrono_created_at").toInstant());
-
-        chrono.setUser(userRowMapper.mapMinimalRow(rs, 1));
-
+        if (rs.getString("user_id") != null) {
+            chrono.setUser(
+                    userRowMapper.mapMinimalRow(rs, 1)
+            );
+        }
         return chrono;
     }
 }

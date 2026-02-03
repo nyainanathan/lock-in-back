@@ -75,4 +75,21 @@ public class ChronosRepository {
 
         return jdbcTemplate.query(sql, chronosRowMapper, userId, offset, size);
     }
+
+    public Chronos deleteById(String chronoId){
+        String sql = """
+                DELETE FROM chronos WHERE id = CAST(? AS uuid)
+                """;
+
+        Chronos toBeDeleted = findById(chronoId);
+
+        jdbcTemplate.update(sql, chronoId);
+
+        return toBeDeleted;
+    }
+
+    public Chronos update(String query, Object[] args, String id){
+        jdbcTemplate.update(query, args);
+        return findById(id);
+    }
 }
