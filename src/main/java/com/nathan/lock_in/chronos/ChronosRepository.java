@@ -12,17 +12,23 @@ public class ChronosRepository {
     private final ChronosRowMapper chronosRowMapper;
 
     public Chronos findById(String id) {
+
         String sql = """
                 SELECT c.id as chrono_id,
                 c.duration as chrono_duration,
                 c.title as chrono_title,
                 c.created_at as chrono_created_at,
                 c.unit as chrono_unit,
-                u.user as user_id,
+                u.id as user_id,
                 u.first_name as user_first_name,
                 u.last_name as user_last_name,
-                u.email as user_email,
+                u.email as user_email
+                FROM chronos AS c
+                JOIN users AS u ON c.id_user = u.id
+                WHERE c.id = ?
                 """;
+
+        return jdbcTemplate.queryForObject(sql, chronosRowMapper, id);
     }
 
     public Chronos save(ChronosCreationDTO toSave) {
@@ -46,5 +52,7 @@ public class ChronosRepository {
                 },
                 String.class
         );
+
+        return findById(newChronoId);
     }
 }
