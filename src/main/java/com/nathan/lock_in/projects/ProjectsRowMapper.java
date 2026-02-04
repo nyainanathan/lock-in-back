@@ -22,7 +22,7 @@ public class ProjectsRowMapper implements RowMapper<Projects> {
         project.setId(rs.getString("project_id"));
         project.setTitle(rs.getString("project_title"));
         project.setDescription(rs.getString("project_description"));
-
+        project.setCreatedAt(rs.getTimestamp("project_created_at").toInstant());
         project.setUser(userRowMapper.mapMinimalRow(rs, 1));
 
         return project;

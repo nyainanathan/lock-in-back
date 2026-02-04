@@ -20,14 +20,14 @@ public class ProjectService {
     }
 
     public List<Projects> findUserProjects(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
-        String userId = user.getId();
+        String userId = getUserId();
         return projectsRepository.findUserProjects(userId);
 
     }
 
     public Projects create(ProjectCreationDTO toCreate) {
+        String userId = getUserId();
+        toCreate.setUserId(userId);
         return projectsRepository.create(toCreate);
     }
 
@@ -59,6 +59,13 @@ public class ProjectService {
 
     public Projects delete(String projectId) {
         return projectsRepository.delete(projectId);
+    }
+
+    private String getUserId(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
+        String userId = user.getId();
+        return userId;
     }
 }
 
