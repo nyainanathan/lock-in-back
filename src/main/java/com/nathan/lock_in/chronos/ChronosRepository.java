@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,5 +93,9 @@ public class ChronosRepository {
     public Chronos update(String query, Object[] args, String id){
         jdbcTemplate.update(query, args);
         return findById(id);
+    }
+
+    public List<Chronos> getChronosBetweenDates(String query, Object[] args){
+        return jdbcTemplate.query(query, args, chronosRowMapper);
     }
 }
