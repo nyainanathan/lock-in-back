@@ -1,6 +1,7 @@
 package com.nathan.lock_in.chronos;
 
 import com.nathan.lock_in.auth.MinimalUserInfo;
+import com.nathan.lock_in.projects.Projects;
 import com.nathan.lock_in.user.Users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,4 +21,5 @@ public class Chronos {
     private String title;
     private Instant createdAt;
     private DurationUnit unit;
+    private Projects project;
 }

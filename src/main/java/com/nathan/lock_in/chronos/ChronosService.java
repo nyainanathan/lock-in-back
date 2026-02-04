@@ -13,7 +13,30 @@ public class ChronosService {
     private final ChronosRepository chronosRepository;
 
     public Chronos save(ChronosCreationDTO toSave){
-        return chronosRepository.save(toSave);
+        List<Object> params = new ArrayList<>();
+        params.add(toSave.getUserId());
+        params.add(toSave.getDuration());
+        params.add(toSave.getTitle());
+        params.add(toSave.getUnit());
+        String query = new String();
+        if (toSave.getProjectId() != null) {
+            params.add(toSave.getProjectId());
+            query = """
+            INSERT INTO chronos
+            (id_user, duration, title, unit, project_id)
+            VALUES (CAST(? AS uuid), ?, ?, CAST(? AS public.duration_unit), CAST(? AS uuid))
+            RETURNING id
+            """;
+        } else {
+            query = """
+            INSERT INTO chronos
+            (id_user, duration, title, unit)
+            VALUES (CAST(? AS uuid), ?, ?, CAST(? AS public.duration_unit))
+            RETURNING id
+            """;
+        }
+
+        return chronosRepository.save(query, params);
     }
 
     public List<Chronos> findAll(String userId, Integer size, Integer page){

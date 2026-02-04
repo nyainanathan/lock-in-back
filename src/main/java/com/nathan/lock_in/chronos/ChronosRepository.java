@@ -24,32 +24,24 @@ public class ChronosRepository {
                 u.id as user_id,
                 u.first_name as user_first_name,
                 u.last_name as user_last_name,
-                u.email as user_email
+                u.email as user_email,
+                p.id as project_id,
+                p.title as project_title,
+                p.description as project_description
                 FROM chronos AS c
                 JOIN users AS u ON c.id_user = u.id
+                JOIN projects as p ON p.id = c.id_user
                 WHERE c.id = CAST(? AS uuid)
                 """;
 
         return jdbcTemplate.queryForObject(sql, chronosRowMapper, id);
     }
 
-    public Chronos save(ChronosCreationDTO toSave) {
-
-        String sql = """
-        INSERT INTO chronos
-        (id_user, duration, title, unit)
-        VALUES (CAST(? AS uuid), ?, ?, CAST(? AS public.duration_unit))
-        RETURNING id
-        """;
+    public Chronos save(String query, Object[] params) {
 
         String newChronoId = jdbcTemplate.queryForObject(
-                sql,
-                new Object[] {
-                        toSave.getUserId(),
-                        toSave.getDuration(),
-                        toSave.getTitle(),
-                        toSave.getUnit().toString() // Assurez-vous que c'est une String
-                },
+                query,
+                params,
                 String.class
         );
 
@@ -66,9 +58,13 @@ public class ChronosRepository {
                 u.id as user_id,
                 u.first_name as user_first_name,
                 u.last_name as user_last_name,
-                u.email as user_email
+                u.email as user_email,
+                p.id as project_id,
+                p.title as project_title,
+                p.description as project_description
                 FROM chronos AS c
                 JOIN users AS u ON c.id_user = u.id
+                JOIN projects as p ON p.id = c.id_user
                 WHERE u.id = CAST(? AS uuid)
                 OFFSET ? LIMIT ?
                 """;

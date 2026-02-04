@@ -12,4 +12,5 @@ public class ChronosCreationDTO {
     private Double duration;
     private String title;
     private DurationUnit unit;
+    private String projectId;
 }
