@@ -1,5 +1,6 @@
 package com.nathan.lock_in.projects;
 
+import com.nathan.lock_in.chronos.Chronos;
 import com.nathan.lock_in.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -67,5 +68,18 @@ public class ProjectService {
         String userId = user.getId();
         return userId;
     }
+
+    public Chronos associateChrono(String chronoId, String projectId){
+        return projectsRepository.associateToProject(chronoId, projectId);
+    }
+
+    public Chronos dissociateChrono(String chronoId){
+        return projectsRepository.dissociateToProject(chronoId);
+    }
+
+    public List<Chronos> findByProjectId(String projectId){
+        return projectsRepository.findChronosByProject(projectId);
+    }
+
 }
 
