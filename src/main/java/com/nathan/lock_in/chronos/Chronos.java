@@ -22,4 +22,5 @@ public class Chronos {
     private Instant createdAt;
     private DurationUnit unit;
     private Projects project;
+    private Instant stoppedAt;
 }

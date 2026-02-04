@@ -23,6 +23,7 @@ public class ChronosRowMapper implements RowMapper<Chronos> {
         chrono.setTitle(rs.getString("chrono_title"));
         chrono.setDuration(rs.getDouble("chrono_duration"));
         chrono.setCreatedAt(rs.getTimestamp("chrono_created_at").toInstant());
+        chrono.setStoppedAt(rs.getTimestamp("chrono_stopped_at").toInstant());
 
         if(rs.getString("project_id") != null) {
             Projects  projects = new Projects();
