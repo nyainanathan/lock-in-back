@@ -38,6 +38,7 @@ public class ChronosRowMapper implements RowMapper<Chronos> {
                     userRowMapper.mapMinimalRow(rs, 1)
             );
         }
+
         return chrono;
     }
 }

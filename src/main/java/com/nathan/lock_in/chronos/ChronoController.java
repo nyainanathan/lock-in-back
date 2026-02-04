@@ -37,9 +37,10 @@ public class ChronoController {
     public ResponseEntity<?> findAll(@RequestParam(required = false) Integer size, @RequestParam(required = false) Integer page){
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            assert auth != null;
             CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
+            assert user != null;
             String userId = user.getId();
-
             List<Chronos> chronos = chronosService.findAll(userId, size, page);
             return new ResponseEntity<>(chronos, HttpStatus.OK);
         } catch (Exception e) {

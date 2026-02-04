@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,11 +28,12 @@ public class ChronosRepository {
                 u.email as user_email,
                 p.id as project_id,
                 p.title as project_title,
-                p.description as project_description
+                p.description as project_description,
+                p.created_at as project_created_at
                 FROM chronos AS c
                 JOIN users AS u ON c.id_user = u.id
-                JOIN projects as p ON p.id = c.id_user
-                WHERE c.id = CAST(? AS uuid)
+                LEFT JOIN projects as p ON c.id_project = p.id
+                WHERE c.id = ?::uuid
                 """;
 
         return jdbcTemplate.queryForObject(sql, chronosRowMapper, id);
@@ -41,8 +43,8 @@ public class ChronosRepository {
 
         String newChronoId = jdbcTemplate.queryForObject(
                 query,
-                params,
-                String.class
+                String.class,
+                params
         );
 
         return findById(newChronoId);
@@ -61,15 +63,16 @@ public class ChronosRepository {
                 u.email as user_email,
                 p.id as project_id,
                 p.title as project_title,
-                p.description as project_description
+                p.description as project_description,
+                p.created_at as project_created_at
                 FROM chronos AS c
                 JOIN users AS u ON c.id_user = u.id
-                JOIN projects as p ON p.id = c.id_user
-                WHERE u.id = CAST(? AS uuid)
-                OFFSET ? LIMIT ?
+                LEFT JOIN projects AS p ON p.id = c.id_project
+                WHERE c.id_user= ?::uuid
+                LIMIT ? OFFSET ?;
                 """;
 
-        return jdbcTemplate.query(sql, chronosRowMapper, userId, offset, size);
+        return jdbcTemplate.query(sql, chronosRowMapper, userId, size, offset);
     }
 
     public Chronos deleteById(String chronoId){

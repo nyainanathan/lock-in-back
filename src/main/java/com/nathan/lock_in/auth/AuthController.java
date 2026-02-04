@@ -20,7 +20,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserCreationDTO userToSave) throws Exception {
         try {
-            System.out.println(userToSave);
+
             LoginResponse resp = authService.register(userToSave);
             return new ResponseEntity<>(resp, HttpStatus.CREATED);
         } catch (Exception e) {

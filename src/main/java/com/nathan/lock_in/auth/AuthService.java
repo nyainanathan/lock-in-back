@@ -23,7 +23,7 @@ public class AuthService {
     public LoginResponse register(UserCreationDTO userToSave){
 
         Optional<Users> isExisting = userRepo.findByEmail(userToSave.getEmail());
-        System.out.println("this user");
+
         if(!isExisting.isEmpty()) {
             throw new RuntimeException("This user already exists!");
         }
@@ -31,7 +31,7 @@ public class AuthService {
         userToSave.setPasswordHash(
                 passwordEncoder.encode(userToSave.getPasswordHash())
         );
-        System.out.println("saving");
+
         Users createdUser = userRepo.save(userToSave);
 
         return getLoginResponse(createdUser);

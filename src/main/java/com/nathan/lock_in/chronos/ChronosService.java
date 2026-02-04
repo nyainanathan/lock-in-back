@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -14,29 +15,32 @@ public class ChronosService {
 
     public Chronos save(ChronosCreationDTO toSave){
         List<Object> params = new ArrayList<>();
-        params.add(toSave.getUserId());
+        params.add(UUID.fromString(toSave.getUserId()));
         params.add(toSave.getDuration());
         params.add(toSave.getTitle());
-        params.add(toSave.getUnit());
-        String query = new String();
+        params.add(toSave.getUnit().name());
+        String query;
+
         if (toSave.getProjectId() != null) {
-            params.add(toSave.getProjectId());
+            params.add(UUID.fromString(toSave.getProjectId()));
             query = """
             INSERT INTO chronos
-            (id_user, duration, title, unit, project_id)
-            VALUES (CAST(? AS uuid), ?, ?, CAST(? AS public.duration_unit), CAST(? AS uuid))
+            (id_user, duration, title, unit, id_project)
+            VALUES (?, ?, ?, CAST(? AS duration_unit), ?)
             RETURNING id
             """;
         } else {
             query = """
             INSERT INTO chronos
             (id_user, duration, title, unit)
-            VALUES (CAST(? AS uuid), ?, ?, CAST(? AS public.duration_unit))
+            VALUES (?, ?, ?, CAST(? AS duration_unit))
             RETURNING id
             """;
         }
+        for(Object p : params){
 
-        return chronosRepository.save(query, params);
+        }
+        return chronosRepository.save(query, params.toArray(new Object[0]));
     }
 
     public List<Chronos> findAll(String userId, Integer size, Integer page){
