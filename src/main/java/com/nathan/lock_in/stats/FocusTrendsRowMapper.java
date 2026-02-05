@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FocusTrendsRowMapper implements RowMapper<FocusTrends> {
 
     @Override

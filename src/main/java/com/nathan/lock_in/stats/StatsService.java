@@ -102,7 +102,7 @@ public class StatsService {
         FocusTrends[] trends = new FocusTrends[dayRange];
         LocalDate startDate = LocalDate.now();
 
-        for(int i = dayRange ; i >=0 ; i--){
+        for(int i = dayRange ; i >0 ; i--){
             startDate.minusDays(1);
             trends[dayRange - 1 - i] = new FocusTrends(startDate, 0d);
         }
