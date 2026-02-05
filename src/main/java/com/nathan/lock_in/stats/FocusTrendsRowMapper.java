@@ -1,0 +1,21 @@
+package com.nathan.lock_in.stats;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.time.LocalDate;
+
+import org.springframework.jdbc.core.RowMapper;
+
+public class FocusTrendsRowMapper implements RowMapper<FocusTrends> {
+
+    @Override
+    public FocusTrends mapRow(ResultSet rs, int rowNum) throws SQLException{
+        FocusTrends trends = new FocusTrends();
+        String createdAt = rs.getString("created_at").substring(0, 10);
+        trends.setDate(LocalDate.parse(createdAt));
+        trends.setFocusedMinutes(rs.getDouble("total_focused"));
+        return trends;
+    }
+    
+}

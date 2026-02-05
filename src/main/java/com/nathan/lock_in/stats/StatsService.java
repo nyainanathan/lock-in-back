@@ -1,6 +1,7 @@
 package com.nathan.lock_in.stats;
 
 import com.nathan.lock_in.chronos.Chronos;
+import com.nathan.lock_in.chronos.ChronosRepository;
 import com.nathan.lock_in.chronos.ChronosService;
 import com.nathan.lock_in.chronos.DurationUnit;
 import com.nathan.lock_in.user.CustomUserDetails;
@@ -13,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 public class StatsService {
 
     private final ChronosService chronoService;
+    private final StatsRepository statsRepository;
 
     public GlobalStats getGlobalStats(StatsRangeEnum range) throws Exception {
 
@@ -91,6 +94,36 @@ public class StatsService {
         );
 
         return stats;
+    }
+
+    public FocusTrends[] getTrends(Integer dayRange){
+        if(dayRange == null){
+            dayRange = 7;
+        }
+
+        FocusTrends[] trends = new FocusTrends[dayRange];
+        LocalDate startDate = LocalDate.now();
+
+        for(int i = dayRange ; i >=0 ; i--){
+            startDate.minusDays(1);
+            trends[dayRange - 1 - i] = new FocusTrends(startDate, 0d);
+        }
+
+        String startDateTime = startDate.toString() + "T00:00:00.000Z";
+
+        List<FocusTrends> actualTrends = statsRepository.getTrendsInRange(startDateTime, getUserId());
+
+        for(FocusTrends t : trends){
+            for(FocusTrends actualTrend : actualTrends){
+                if(actualTrend.getDate().equals(t.getDate())){
+                    t.setFocusedMinutes(
+                        actualTrend.getFocusedMinutes()
+                    );
+                }
+            }
+        }
+
+        return trends;
     }
 
     private String getUserId(){
