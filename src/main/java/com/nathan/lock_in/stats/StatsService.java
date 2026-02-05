@@ -128,6 +128,10 @@ public class StatsService {
         return statsRepository.getStatsPerProject(getUserId());
     }
 
+    public StreakStats getUserStreakStats() {
+        return statsRepository.getUserStreak(getUserId());
+    }
+
     private String getUserId(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();

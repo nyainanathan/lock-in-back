@@ -17,6 +17,7 @@ public class StatsRepository {
     private final JdbcTemplate jdbcTemplate;
     private final FocusTrendsRowMapper focusTrendsRowMapper;
     private final ProjectStatsRowMapper projectStatsRowMapper;
+    private final StreakStatsRowMapper streakStatsRowMapper;
 
     public List<FocusTrends> getTrendsInRange(String startDate, String userId){
 
@@ -55,5 +56,50 @@ public class StatsRepository {
                     GROUP BY p.id, p.title
                 """;   
         return jdbcTemplate.query(sql, projectStatsRowMapper, userId);
+    }
+
+    public StreakStats getUserStreak(String userId){
+        String sql = """
+                -- Step 1: Get distinct dates 
+                WITH user_dates AS (
+                    SELECT DISTINCT
+                        id_user,
+                        DATE(created_at) as activity_date
+                    FROM chronos
+                    where id_user = ?::uuid
+                ),
+
+                -- Step 2: Identify streak groups using row_number trick
+                streak_groups AS (
+                    SELECT 
+                        id_user,
+                        activity_date,
+                        activity_date - (ROW_NUMBER() OVER (PARTITION BY id_user ORDER BY activity_date))::int AS streak_group
+                    FROM user_dates
+                ),
+
+                -- Step 3: Calculate streak lengths
+                streaks AS (
+                    SELECT 
+                        id_user,
+                        streak_group,
+                        MIN(activity_date) as streak_start,
+                        MAX(activity_date) as streak_end,
+                        COUNT(*) as streak_length,
+                        MAX(activity_date) = CURRENT_DATE OR MAX(activity_date) = CURRENT_DATE - 1 as is_current
+                    FROM streak_groups
+                    GROUP BY id_user, streak_group
+                )
+
+                -- Step 4: Get biggest and current streak per user
+                SELECT 
+                    id_user,
+                    MAX(streak_length) as biggest_streak,
+                    MAX(CASE WHEN is_current THEN streak_length ELSE 0 END) as current_streak
+                FROM streaks
+                GROUP BY id_user
+                """;
+
+                return jdbcTemplate.queryForObject(sql,streakStatsRowMapper, userId );
     }
 }
