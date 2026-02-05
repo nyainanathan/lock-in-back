@@ -1,7 +1,6 @@
 package com.nathan.lock_in.stats;
 
 import com.nathan.lock_in.chronos.Chronos;
-import com.nathan.lock_in.chronos.ChronosRepository;
 import com.nathan.lock_in.chronos.ChronosService;
 import com.nathan.lock_in.chronos.DurationUnit;
 import com.nathan.lock_in.user.CustomUserDetails;
@@ -14,7 +13,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -124,6 +122,10 @@ public class StatsService {
         }
 
         return trends;
+    }
+
+    public List<ProjectStats> getProjectStats(){
+        return statsRepository.getStatsPerProject(getUserId());
     }
 
     private String getUserId(){
