@@ -1,7 +1,6 @@
 package com.nathan.lock_in.auth.jwt;
 
 import com.nathan.lock_in.user.CustomUserDetails;
-import com.nathan.lock_in.user.CustomUserDetailsService;
 import com.nathan.lock_in.user.UserRepository;
 import com.nathan.lock_in.user.Users;
 import jakarta.servlet.FilterChain;
@@ -23,7 +22,6 @@ import java.util.Optional;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private JwtUtil jwtUtil;
-    private CustomUserDetailsService customUserDetailsService;
     private UserRepository userRepo;
 
     @Override

@@ -2,7 +2,6 @@ package com.nathan.lock_in.chronos;
 
 import com.nathan.lock_in.auth.MinimalUserInfo;
 import com.nathan.lock_in.projects.Projects;
-import com.nathan.lock_in.user.Users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
