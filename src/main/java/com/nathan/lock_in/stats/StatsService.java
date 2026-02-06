@@ -102,15 +102,15 @@ public class StatsService {
         FocusTrends[] trends = new FocusTrends[dayRange];
         LocalDate startDate = LocalDate.now();
 
-        for(int i = dayRange ; i >0 ; i--){
-            startDate.minusDays(1);
+        for(int i = 0 ; i  < dayRange ; i++){
+            startDate = startDate.minusDays(1);
             trends[dayRange - 1 - i] = new FocusTrends(startDate, 0d);
         }
 
         String startDateTime = startDate.toString() + "T00:00:00.000Z";
 
         List<FocusTrends> actualTrends = statsRepository.getTrendsInRange(startDateTime, getUserId());
-
+        
         for(FocusTrends t : trends){
             for(FocusTrends actualTrend : actualTrends){
                 if(actualTrend.getDate().equals(t.getDate())){

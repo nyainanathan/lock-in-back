@@ -30,7 +30,7 @@ public class StatsRepository {
                     END
                 ) as total_focused, DATE(created_at) as date
                 FROM chronos 
-                WHERE id_user = ?::uuid, created_at > ?::timestamptz
+                WHERE id_user = ?::uuid AND created_at > ?::timestamp
                 GROUP BY DATE(created_at)
                 """;
 
