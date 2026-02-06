@@ -60,7 +60,6 @@ public class StatsRepository {
 
     public StreakStats getUserStreak(String userId){
         String sql = """
-                -- Step 1: Get distinct dates 
                 WITH user_dates AS (
                     SELECT DISTINCT
                         id_user,
@@ -68,8 +67,6 @@ public class StatsRepository {
                     FROM chronos
                     where id_user = ?::uuid
                 ),
-
-                -- Step 2: Identify streak groups using row_number trick
                 streak_groups AS (
                     SELECT 
                         id_user,
@@ -77,8 +74,6 @@ public class StatsRepository {
                         activity_date - (ROW_NUMBER() OVER (PARTITION BY id_user ORDER BY activity_date))::int AS streak_group
                     FROM user_dates
                 ),
-
-                -- Step 3: Calculate streak lengths
                 streaks AS (
                     SELECT 
                         id_user,
@@ -90,8 +85,6 @@ public class StatsRepository {
                     FROM streak_groups
                     GROUP BY id_user, streak_group
                 )
-
-                -- Step 4: Get biggest and current streak per user
                 SELECT 
                     id_user,
                     MAX(streak_length) as biggest_streak,

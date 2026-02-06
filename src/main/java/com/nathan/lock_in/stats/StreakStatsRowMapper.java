@@ -13,7 +13,7 @@ public class StreakStatsRowMapper implements RowMapper<StreakStats>{
 
         StreakStats stat = new StreakStats();
 
-        stat.setIdUser(rs.getString("id_use"));
+        stat.setIdUser(rs.getString("id_user"));
         stat.setBiggestStreak(rs.getInt("biggest_streak"));
         stat.setCurrentStreak(rs.getInt("current_streak"));
 
