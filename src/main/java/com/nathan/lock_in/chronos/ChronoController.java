@@ -1,6 +1,13 @@
 package com.nathan.lock_in.chronos;
 
 import com.nathan.lock_in.user.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -16,11 +23,33 @@ import java.util.List;
 @RestController
 @RequestMapping("/chronos")
 @RequiredArgsConstructor
+@Tag(
+        name = "Chronos",
+        description = "Endpoints for managing focus sessions (chronos) for the authenticated user"
+)
 public class ChronoController {
 
     private final ChronosService chronosService;
 
     @PostMapping("/")
+    @Operation(
+            summary = "Create a new chrono",
+            description = "Creates a new focus session (chrono) for the authenticated user."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Chrono successfully created",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Chronos.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid data supplied to create a chrono"
+            )
+    })
     public ResponseEntity<?> save(@RequestBody ChronosCreationDTO toSave){
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -35,7 +64,30 @@ public class ChronoController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> findAll(@RequestParam(required = false) Integer size, @RequestParam(required = false) Integer page){
+    @Operation(
+            summary = "List chronos for user",
+            description = "Returns a paginated list of chronos (focus sessions) for the authenticated user."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Chronos successfully retrieved",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Chronos.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid pagination parameters or request"
+            )
+    })
+    public ResponseEntity<?> findAll(
+            @Parameter(description = "Optional page size", example = "20")
+            @RequestParam(required = false) Integer size,
+            @Parameter(description = "Optional page number (0-based)", example = "0")
+            @RequestParam(required = false) Integer page
+    ){
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             assert auth != null;
@@ -50,11 +102,37 @@ public class ChronoController {
     }
 
     @GetMapping("/dates")
+    @Operation(
+            summary = "Get chronos between dates",
+            description = "Returns all chronos that start between the given `start` and `end` instants."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Chronos in the requested date range successfully retrieved",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Chronos.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Unexpected error while fetching chronos for the date range"
+            )
+    })
     public ResponseEntity<?> getChronosBetweenDates(
+            @Parameter(
+                    description = "Start of the date range (ISO-8601)",
+                    example = "2025-01-01T00:00:00Z"
+            )
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             Instant start,
 
+            @Parameter(
+                    description = "End of the date range (ISO-8601)",
+                    example = "2025-01-31T23:59:59Z"
+            )
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             Instant end
@@ -69,7 +147,28 @@ public class ChronoController {
     }
 
     @DeleteMapping("/{chronoId}")
-    public ResponseEntity<?> delete(@PathVariable String chronoId){
+    @Operation(
+            summary = "Delete a chrono",
+            description = "Deletes a chrono by its identifier and returns the deleted entity."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Chrono successfully deleted",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Chronos.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Unexpected error while deleting the chrono"
+            )
+    })
+    public ResponseEntity<?> delete(
+            @Parameter(description = "Identifier of the chrono to delete")
+            @PathVariable String chronoId
+    ){
         try {
             Chronos deleted = chronosService.delete(chronoId);
             return new ResponseEntity<>(deleted, HttpStatus.OK);
@@ -79,6 +178,24 @@ public class ChronoController {
     }
 
     @PatchMapping("/")
+    @Operation(
+            summary = "Update an existing chrono",
+            description = "Updates fields of an existing chrono and returns the updated entity."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Chrono successfully updated",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Chronos.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Unexpected error while updating the chrono"
+            )
+    })
     public ResponseEntity<?> edit(@RequestBody ChronosUpdate updatedChronos){
         try {
             Chronos updated = chronosService.update(updatedChronos);
