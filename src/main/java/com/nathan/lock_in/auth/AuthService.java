@@ -55,7 +55,8 @@ public class AuthService {
     @NonNull
     private LoginResponse getLoginResponse(Users currentUser) {
         String jwtToken = jwtUtil.createToken(Map.of(
-                "id", currentUser.getId()
+                "id", currentUser.getId(),
+                "name", currentUser.getFirstName()
         ), currentUser.getEmail());
 
         MinimalUserInfo info = new MinimalUserInfo();
