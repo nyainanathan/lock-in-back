@@ -128,6 +128,10 @@ public class StatsService {
         return statsRepository.getStatsPerProject(getUserId());
     }
 
+    public ProjectStats getLastWorkedOnProject() {
+        return this.statsRepository.getLastProject(getUserId());
+    }
+
     public StreakStats getUserStreakStats() {
         return statsRepository.getUserStreak(getUserId());
     }

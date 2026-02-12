@@ -100,6 +100,35 @@ public class StatsController {
         }
     }
 
+    @GetMapping("/last-project")
+    @Operation(
+        summary = "Get the last worked on project stats",
+        description = "Returns aggregated statistics grouped by project for the authenticated user."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Project statistics successfully retrieved",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ProjectStats.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Unexpected error while fetching project statistics"
+            )
+    })
+    public ResponseEntity<?> getLastProject(){
+        try{
+                ProjectStats lastProject = this.statsService.getLastWorkedOnProject();
+                return new ResponseEntity<>(lastProject, HttpStatus.OK);
+        } catch (Exception e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @GetMapping("/projects")
     @Operation(
             summary = "Get per-project statistics",

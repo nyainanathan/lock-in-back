@@ -58,6 +58,31 @@ public class StatsRepository {
         return jdbcTemplate.query(sql, projectStatsRowMapper, userId);
     }
 
+
+    public ProjectStats getLastProject(String userId) {
+        String sql = """
+                    SELECT
+                        p.id,
+                        p.title,
+                        MAX(c.created_at) as latest_created_at,
+                        p.id_user,
+                        SUM(
+                            CASE
+                                WHEN c.unit = 'second' THEN c.duration / 60
+                                WHEN c.unit = 'minute' THEN c.duration
+                                WHEN c.unit = 'hour' THEN c.duration * 60
+                            END
+                        ) as total_minutes
+                    FROM projects p
+                    LEFT JOIN chronos c ON c.id_project = p.id
+                    WHERE p.id_user = ?::uuid
+                    GROUP BY p.id, p.title, p.id_user
+                    ORDER BY MAX(c.created_at) DESC
+                    LIMIT 1;
+                """;
+        return jdbcTemplate.queryForObject(sql, projectStatsRowMapper, userId);
+    }
+
     public StreakStats getUserStreak(String userId){
         String sql = """
                 WITH user_dates AS (
