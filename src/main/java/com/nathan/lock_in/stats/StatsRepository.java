@@ -43,6 +43,7 @@ public class StatsRepository {
                     SELECT 
                     p.id,
                     p.title,
+                    p.description,
                     SUM(
                         CASE 
                             WHEN c.unit = 'second' THEN c.duration / 60
@@ -66,6 +67,7 @@ public class StatsRepository {
                         p.title,
                         MAX(c.created_at) as latest_created_at,
                         p.id_user,
+                        p.description,
                         SUM(
                             CASE
                                 WHEN c.unit = 'second' THEN c.duration / 60

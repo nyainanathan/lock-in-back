@@ -30,9 +30,15 @@ public class ProjectStatsRowMapper implements RowMapper<ProjectStats>{
         BigDecimal focusedMinutesBD = rs.getBigDecimal("total_minutes");
         Double focusedMinutes = (focusedMinutesBD != null) ? focusedMinutesBD.doubleValue() : 0.0;
 
+        String projectDescription = rs.getString("description");
+        if(projectDescription == null) {
+            projectDescription = "No description";
+        }
+
         stat.setId(projectId);
         stat.setName(projectName);
         stat.setFocusedMinutes(focusedMinutes);
+        stat.setDescription(projectDescription);
 
         return stat;
     }

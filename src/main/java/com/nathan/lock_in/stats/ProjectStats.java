@@ -15,4 +15,5 @@ public class ProjectStats {
     private String id;
     private String name;
     private double focusedMinutes;
+    private String description;
 }
