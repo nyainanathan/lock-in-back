@@ -51,11 +51,11 @@ public class StatsRepository {
                         END
                     ) as total_minutes
                     FROM projects p
-                    RIGHT JOIN chronos c ON c.id_project = p.id
-                    WHERE c.id_user = ?::uuid
+                    FULL OUTER JOIN chronos c ON c.id_project = p.id
+                    WHERE c.id_user = ?::uuid or p.id_user= ?::uuid
                     GROUP BY p.id, p.title
                 """;   
-        return jdbcTemplate.query(sql, projectStatsRowMapper, userId);
+        return jdbcTemplate.query(sql, projectStatsRowMapper, userId, userId);
     }
 
 

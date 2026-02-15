@@ -88,7 +88,7 @@ public class StatsController {
                     required = false,
                     example = "30"
             )
-            @RequestParam(required = false) Integer dayRange
+            @RequestParam(name = "range") Integer dayRange
     ) {
         try {
             FocusTrends[] trends = statsService.getTrends(dayRange);
