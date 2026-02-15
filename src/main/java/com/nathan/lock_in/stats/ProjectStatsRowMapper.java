@@ -34,8 +34,6 @@ public class ProjectStatsRowMapper implements RowMapper<ProjectStats>{
         stat.setName(projectName);
         stat.setFocusedMinutes(focusedMinutes);
 
-        System.out.println(stat);
-
         return stat;
     }
 }
